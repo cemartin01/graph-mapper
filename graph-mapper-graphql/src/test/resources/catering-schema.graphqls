@@ -1,0 +1,125 @@
+type Query {
+    findRecipe(id: String): Recipe,
+    findMeal(id: String): Meal
+    findMealByCriteria(criteria: MealCriteria): Meal
+    findMealByArrayCriteria(criteria: ArrayCriteria): Meal
+    findWeekMenu(id: String): WeekMenu
+}
+
+type Mutation {
+    generateWeekMenu(week: Int): WeekMenu
+}
+
+input MealCriteria {
+    nameContains: String
+    maxNutritionValue: Int
+    active: Boolean
+    popularity: Float
+    group: MealGroup
+    byteValue: Byte
+    code: Code,
+    nestedCriteria: NestedCriteria
+}
+
+input NestedCriteria {
+    nameExcludes: String
+}
+
+input ArrayCriteria {
+    nameContains: [String]
+    maxNutritionValue: [Int]
+    active: [Boolean]
+    popularity: [Float]
+    group: [MealGroup]
+    byteValue: [Byte]
+    code: [Code]
+    nestedCriteria: [NestedCriteria]
+}
+
+scalar Byte
+scalar Code
+
+enum MealGroup {
+    LUNCH
+    SOUP
+}
+
+type Customer {
+    id: ID!,
+    name: String,
+    active: Boolean
+}
+
+type Provider {
+    id: ID!,
+    name: String,
+    active: Boolean
+}
+
+type Recipe {
+    id: ID!,
+    name: String,
+    code: String,
+    note: String,
+    variants(size: Int, mealType: String): [Meal],
+    active: Boolean
+}
+
+interface Meal {
+    id: ID!,
+    recipe: Recipe,
+    name: String,
+    mealType: MealType,
+    active: Boolean
+}
+
+type Lunch implements Meal {
+    id: ID!,
+    recipe: Recipe,
+    name: String,
+    mealType: MealType,
+    active: Boolean,
+    sideDish: SideDish
+}
+
+type Soup implements Meal {
+    id: ID!,
+    recipe: Recipe,
+    name: String,
+    mealType: MealType,
+    active: Boolean
+}
+
+type SideDish {
+    id: ID!,
+    name: String,
+    active: Boolean
+}
+
+type MealType {
+    id: ID!,
+    name: String,
+    active: Boolean
+}
+
+type WeekMenu {
+    id: ID!,
+    menuYear: Int,
+    menuWeek: Int,
+    provider: Provider,
+    customer: Customer,
+    days: [DayMenu]
+}
+
+type DayMenu {
+    id: ID!,
+    dayOfWeek: Int,
+    items: [DayMenuItem],
+}
+
+type DayMenuItem {
+    id: ID!,
+    meal: Meal,
+    mealType: MealType,
+    position: Int
+}

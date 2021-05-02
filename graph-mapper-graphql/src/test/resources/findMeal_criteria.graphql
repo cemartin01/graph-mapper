@@ -1,0 +1,16 @@
+query {
+    findMealByCriteria(criteria: {
+        nameContains: "m"
+        maxNutritionValue: 1000
+        active: false
+        popularity: 0.5
+        group: LUNCH
+        byteValue: 1
+        code: "123456"
+        nestedCriteria: {
+            nameExcludes: "abc"
+        }
+    }) {
+        id
+    }
+}

@@ -1,0 +1,87 @@
+<!--
+
+    Copyright 2021 cemartin01 (https://github.com/cemartin01).
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.cemartin01</groupId>
+    <artifactId>graph-mapper-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>graph-mapper-model-mapper</artifactId>
+  <packaging>jar</packaging>
+  <version>0.1-SNAPSHOT</version>
+  <name>Graph Mapper Model Mapper Module</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.cemartin01</groupId>
+      <artifactId>graph-mapper-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.modelmapper</groupId>
+      <artifactId>modelmapper</artifactId>
+      <version>2.4.0</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>../</directory>
+        <includes>
+          <include>LICENSE</include>
+          <include>NOTICE</include>
+        </includes>
+        <targetPath>META-INF</targetPath>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>4.1</version>
+        <configuration>
+          <licenseSets>
+            <licenseSet>
+              <header>../license-header.txt</header>
+              <excludes>
+                <exclude>**/README</exclude>
+                <exclude>src/test/**</exclude>
+                <exclude>src/main/resources/**</exclude>
+              </excludes>
+            </licenseSet>
+          </licenseSets>
+          <properties>
+            <owner>cemartin01</owner>
+            <email>cemartin768@gmail.com</email>
+          </properties>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

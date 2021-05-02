@@ -1,0 +1,15 @@
+query {
+    findMeal(id: "123456") {
+        id
+        ...MealWithRecipe
+        recipe {
+            id
+        }
+    }
+}
+
+fragment MealWithRecipe on Meal {
+    recipe {
+        id
+    }
+}

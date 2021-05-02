@@ -1,0 +1,24 @@
+query {
+    findMeal(id: "123456") {
+        id
+        recipe {
+            id
+        }
+        ... on Meal {
+            recipe {
+                id
+            }
+        }
+        ... on Lunch {
+            recipe {
+                id
+            }
+        }
+        ... on Soup {
+            recipe{
+                id
+            }
+        }
+
+    }
+}

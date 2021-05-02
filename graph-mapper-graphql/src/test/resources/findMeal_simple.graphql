@@ -1,0 +1,9 @@
+query {
+    findMeal(id: "123456") {
+        id
+        recipe {
+            id
+            name
+        }
+    }
+}

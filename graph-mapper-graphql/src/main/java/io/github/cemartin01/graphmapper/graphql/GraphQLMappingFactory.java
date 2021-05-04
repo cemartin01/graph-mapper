@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Factory for a GraphQLMapping
+ * Factory for a GraphQL mapping.
  */
 public class GraphQLMappingFactory {
 
@@ -56,10 +56,9 @@ public class GraphQLMappingFactory {
    }
 
    /**
-    * Builds GraphQLMapping that contains the root GraphQL field and a mapping graph.
-    * Mapping graph may be used to build a GraphMapper instance.
-    * @param env
-    * @return GraphQLMapping
+    * Builds instance of GraphQL mapping that contains a mapping graph based on passed Data fetching environment.
+    * @param env Data fetching environment of current GraphQL query or mutation
+    * @return instance of GraphQL mapping
     */
    public GraphQLMapping getMapping(DataFetchingEnvironment env) {
       RawNode root = RawNode.of(Node.RootNodeLabel.ROOT, getRootNodeChildren(env.getField(), env), Collections.singletonList(env.getField()));

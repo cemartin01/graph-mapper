@@ -38,6 +38,21 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * Context of GraphQL-java argument (input) binding.
+ *
+ * Provides a way to set up classes that may be instantiated out of arguments.
+ *
+ * Useful for use cases when it's needed to process arguments of nested types in the process of fetching the data.
+ *
+ * For example:
+ * Order {
+ *     ...
+ *     items(criteria: {page: 1, pageSize:50}) {
+ *         ...
+ *     }
+ * }
+ */
 public class ArgumentBindingContext {
 
     private final Map<Class<?>, Coercing> coercingMap = new HashMap<>();
@@ -73,6 +88,14 @@ public class ArgumentBindingContext {
         }
     }
 
+    /**
+     * Initializes the binding of a given class.
+     *
+     * It's possible to instantiate such a class by
+     * {@link io.github.cemartin01.graphmapper.graphql.GraphQLMetadata#getObjectArgument} method
+     * @param clazz class that is supposed to represent a GraphQL-java argument
+     * @throws GraphMapperInitializationException if it's not possible to set up the binding
+     */
     public <T> void addBinding(Class<T> clazz) throws GraphMapperInitializationException {
 
         Map<String, ValueBindings.AbstractBinding<T>> propertyMap = new HashMap<>();

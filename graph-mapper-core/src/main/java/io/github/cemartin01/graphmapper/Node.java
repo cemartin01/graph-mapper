@@ -23,7 +23,13 @@ import lombok.Singular;
 import java.util.List;
 
 /**
- * MappingGraph Mapping Node
+ * A node that describes a reference.
+ *
+ * It's a vertex of {@link io.github.cemartin01.graphmapper.MappingGraph}.
+ *
+ * Every node must be labeled by an implementation of {@link io.github.cemartin01.graphmapper.NodeLabel}.
+ * It's typed to determine which class is used to model metadata. In cases when metadata are not needed, it's
+ * possible to use Void for null values.
  */
 @Getter
 public class Node<T> {

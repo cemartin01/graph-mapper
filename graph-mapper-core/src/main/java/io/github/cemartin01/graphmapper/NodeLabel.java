@@ -16,7 +16,15 @@
 package io.github.cemartin01.graphmapper;
 
 /**
- * Label of MappingGraph nodes
+ * Label for Mapping graph nodes.
+ *
+ * The name should reflect a field name of a mapped entity and DTO.
+ * For example: Label for OrderEntity.items has name "items"
+ *
+ * Every {@link io.github.cemartin01.graphmapper.Node} must be labeled by an instance of node label
+ * interface implementation.
+ *
+ * It's recommended to use an Enum to model the labels.
  */
 public interface NodeLabel {
 

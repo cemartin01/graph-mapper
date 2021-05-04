@@ -15,6 +15,9 @@
  */
 package io.github.cemartin01.graphmapper.exception;
 
+/**
+ * An exception thrown by component during initialization of contexts and factories.
+ */
 public class GraphMapperInitializationException extends Exception {
 
    public GraphMapperInitializationException(final String message) {

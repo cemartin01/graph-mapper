@@ -22,6 +22,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Container that merges basic GraphQL-java scalars and the custom ones
+ *
+ * Method {@link #getAllScalars} is suitable for constructor of Argument binding context
+ * {@link io.github.cemartin01.graphmapper.graphql.argument.ArgumentBindingContext#ArgumentBindingContext(List)}
+ */
 public class ScalarList {
 
     private final List<GraphQLScalarType> scalars = new ArrayList<>();

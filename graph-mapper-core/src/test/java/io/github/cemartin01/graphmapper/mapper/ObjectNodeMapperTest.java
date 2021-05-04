@@ -1,7 +1,6 @@
 package io.github.cemartin01.graphmapper.mapper;
 
 import com.google.common.collect.ImmutableList;
-import io.github.cemartin01.graphmapper.mock.dto.CustomerDTO;
 import io.github.cemartin01.graphmapper.mock.dto.MealTypeDTO;
 import io.github.cemartin01.graphmapper.mock.dto.SoupDTO;
 import io.github.cemartin01.graphmapper.mock.entity.*;

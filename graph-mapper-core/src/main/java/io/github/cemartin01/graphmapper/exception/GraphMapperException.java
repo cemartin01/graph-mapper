@@ -15,6 +15,9 @@
  */
 package io.github.cemartin01.graphmapper.exception;
 
+/**
+ * An exception thrown by graph mapper components during runtime.
+ */
 public class GraphMapperException extends RuntimeException {
 
    public GraphMapperException(final String message) {

@@ -23,6 +23,12 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.DestinationSetter;
 import org.modelmapper.spi.SourceGetter;
 
+/**
+ * {@inheritDoc}
+ *
+ * Model-mapper extension of the context.
+ * It associates binding of conditional fields and model-mapper conditional mapping.
+ */
 public class ModelMapperBasedGraphMapperContext extends GraphMapperContext {
 
    @Getter
@@ -35,6 +41,9 @@ public class ModelMapperBasedGraphMapperContext extends GraphMapperContext {
       this.modelMapper = modelMapper;
    }
 
+   /**
+    * {@inheritDoc}
+    */
    public <DTO, E> ModelMapperBinding<DTO, E> addMapping(Class<DTO> dtoClass, Class<E> entityClass) {
       return new ModelMapperBinding<>(dtoClass, entityClass);
    }
@@ -49,6 +58,11 @@ public class ModelMapperBasedGraphMapperContext extends GraphMapperContext {
          super(parentDTOClass, parentEntityClass);
       }
 
+      /**
+       * {@inheritDoc}
+       * @param getterFun setter of a DTO class to skip
+       * @param setterFun getter of an entity class to skip
+       */
       public <V> ModelMapperBinding<DTO, E> bind(NodeLabel nodeLabel, SourceGetter<E> getterFun,
                                       DestinationSetter<DTO, V> setterFun
       ) throws GraphMapperInitializationException {
@@ -57,6 +71,11 @@ public class ModelMapperBasedGraphMapperContext extends GraphMapperContext {
          return this;
       }
 
+      /**
+       * {@inheritDoc}
+       * @param getterFun setter of a DTO class to skip
+       * @param setterFun getter of an entity class to skip
+       */
       public <V> ModelMapperBinding<DTO, E> bindList(NodeLabel nodeLabel, SourceGetter<E> getterFun,
                                           DestinationSetter<DTO, V> setterFun
       ) throws GraphMapperInitializationException {
@@ -65,6 +84,11 @@ public class ModelMapperBasedGraphMapperContext extends GraphMapperContext {
          return this;
       }
 
+      /**
+       * {@inheritDoc}
+       * @param getterFun setter of a DTO class to skip
+       * @param setterFun getter of an entity class to skip
+       */
       public <V> ModelMapperBinding<DTO, E> bindSet(NodeLabel nodeLabel, SourceGetter<E> getterFun,
                                           DestinationSetter<DTO, V> setterFun
       ) throws GraphMapperInitializationException {
@@ -73,6 +97,11 @@ public class ModelMapperBasedGraphMapperContext extends GraphMapperContext {
          return this;
       }
 
+      /**
+       * Applies model-mapper conditional mapping
+       * @param dtoClass a super class of a current DTO class
+       * @param entityClass a super class of a current entity class
+       */
       public void includeBaseBinding(Class<? super DTO> dtoClass, Class<? super E> entityClass) {
          modelMapper.typeMap(parentEntityClass, parentDTOClass)
                  .includeBase(entityClass, dtoClass);

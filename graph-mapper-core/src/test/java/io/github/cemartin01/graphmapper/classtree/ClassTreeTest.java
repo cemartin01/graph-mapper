@@ -2,10 +2,8 @@ package io.github.cemartin01.graphmapper.classtree;
 
 import io.github.cemartin01.graphmapper.mock.dto.LunchDTO;
 import io.github.cemartin01.graphmapper.mock.dto.Meal;
-import io.github.cemartin01.graphmapper.mock.dto.SoupDTO;
 import io.github.cemartin01.graphmapper.mock.entity.LunchEntity;
 import io.github.cemartin01.graphmapper.mock.entity.MealEntity;
-import io.github.cemartin01.graphmapper.mock.entity.SoupEntity;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

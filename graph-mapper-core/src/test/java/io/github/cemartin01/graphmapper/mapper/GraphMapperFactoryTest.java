@@ -4,7 +4,6 @@ import io.github.cemartin01.graphmapper.MappingGraph;
 import io.github.cemartin01.graphmapper.Node;
 import io.github.cemartin01.graphmapper.classtree.ClassNode;
 import io.github.cemartin01.graphmapper.exception.GraphMapperInitializationException;
-import io.github.cemartin01.graphmapper.mock.CateringNodeLabel;
 import io.github.cemartin01.graphmapper.mock.dto.*;
 import io.github.cemartin01.graphmapper.mock.entity.*;
 import org.junit.jupiter.api.Test;

@@ -65,7 +65,7 @@
                 <version>2.22.0</version>
                 <configuration>
                     <argLine>
-                        --illegal-access=permit
+                        @{argLine} --illegal-access=permit
                     </argLine>
                 </configuration>
             </plugin>
@@ -75,7 +75,7 @@
                 <version>2.22.0</version>
                 <configuration>
                     <argLine>
-                        --illegal-access=permit
+                        @{argLine} --illegal-access=permit
                     </argLine>
                 </configuration>
             </plugin>
@@ -96,6 +96,26 @@
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.6</version>
+                <executions>
+                    <execution>
+                        <id>prepare-unit-tests</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-report</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

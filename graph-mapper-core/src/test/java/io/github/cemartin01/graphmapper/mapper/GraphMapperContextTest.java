@@ -13,7 +13,6 @@ import java.util.Set;
 
 import static io.github.cemartin01.graphmapper.mock.CateringNodeLabel.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GraphMapperContextTest {
 

@@ -39,6 +39,22 @@ import io.github.cemartin01.graphmapper.exception.GraphMapperInitializationExcep
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * A component that provides an interface to configure graph mapper behaviour
+ *
+ * It's possible to define 3 ways of class relationships during mapping:
+ * <p>
+ *     <ul>
+ *         <li>class hierarchy mapping</li>
+ *         <li>interface mapping</li>
+ *         <li>typescript like union mapping</li>
+ *     </ul>
+ * </p>
+ *
+ * The conditional fields (references) of mapped classes are defined by {@link #addMapping} method.
+ *
+ * The mappers of unconditional fields are added by {@link #addMapper} method.
+ */
 public class GraphMapperContext {
 
    //DTO class, list of RelationshipTemplates
@@ -64,12 +80,25 @@ public class GraphMapperContext {
       return new Binding<>(dtoClass, entityClass);
    }
 
+   /**
+    * Defines a class hierarchy to properly handle conditional mapping in the scope of class hierarchy
+    * @param dtoClass base DTO class
+    * @param entityClass base entity class
+    * @param classNodes list of subclasses
+    */
    public void defineClassHierarchy(Class<?> dtoClass, Class<?> entityClass, ClassNode...classNodes) {
       ClassTree tree = ClassTree.of(dtoClass, entityClass, classNodes);
       classTreeNodes.put(dtoClass, tree.getRoot());
       populateClassTrees(tree.getRoot());
    }
 
+   /**
+    * Defines interface based mapping
+    * @param dtoInterface a interface for DTO classes
+    * @param entityClass an abstract entity class
+    * @param classNodes list of subclasses
+    * @throws GraphMapperInitializationException if validation of classes fails
+    */
    public void defineInterface(Class<?> dtoInterface, Class<?> entityClass, ClassNode...classNodes)
             throws GraphMapperInitializationException {
       if (!dtoInterface.isInterface()) {
@@ -81,6 +110,13 @@ public class GraphMapperContext {
       defineClassHierarchy(dtoInterface, entityClass, classNodes);
    }
 
+   /**
+    * Defines a typescript like union mapping.
+    * @param dtoInterface empty interface representing union in Java
+    * @param entityClass abstract entity
+    * @param classNodes list of subclasses
+    * @throws GraphMapperInitializationException if validation of classes fails
+    */
    public void defineUnion(Class<?> dtoInterface, Class<?> entityClass, ClassNode...classNodes)
             throws GraphMapperInitializationException {
       if (!dtoInterface.isInterface()) {
@@ -120,13 +156,29 @@ public class GraphMapperContext {
       return referenceMap.get(clazz);
    }
 
+   /**
+    * Describes a binding between a target DTO and an entity class.
+    *
+    * Provides a way to further bind entity getter and DTO setter together to a given node label.
+    *
+    * @param <DTO> A target DTO class
+    * @param <E> An entity class
+    */
    @RequiredArgsConstructor
    public class Binding<DTO, E> {
 
       protected final Class<DTO> parentDTOClass;
       protected final Class<E> parentEntityClass;
 
-      public <V> Binding<DTO, E> bind(NodeLabel nodeLabel) throws GraphMapperInitializationException {
+      /**
+       * Binds an entity getter and DTO setter based on node label name. The field will be mapped conditionally.
+       * The field must be a reference, it will be mapped to a reference.
+       *
+       * @param nodeLabel node label of which the name is used to resolve getter and setter name
+       * @return The same instance of binding to enable fluent calls
+       * @throws GraphMapperInitializationException if it's not possible to resolve getter or setter method
+       */
+      public Binding<DTO, E> bind(NodeLabel nodeLabel) throws GraphMapperInitializationException {
 
          String capitalizedFieldName = getCapitalizedFieldName(nodeLabel);
 
@@ -143,20 +195,36 @@ public class GraphMapperContext {
          return this;
       }
 
-      public <V> Binding<DTO, E> bindList(NodeLabel nodeLabel) throws GraphMapperInitializationException {
+      /**
+       * Binds an entity getter and DTO setter based on node label name. The field will be mapped conditionally.
+       * The field must be a list reference, it will be mapped to a list reference.
+       *
+       * @param nodeLabel node label of which the name is used to resolve getter and setter name
+       * @return The same instance of binding to enable fluent calls
+       * @throws GraphMapperInitializationException if it's not possible to resolve getter or setter method
+       */
+      public Binding<DTO, E> bindList(NodeLabel nodeLabel) throws GraphMapperInitializationException {
 
          return bindCollection(nodeLabel, NodeMapperTemplate.ReferenceType.LIST);
 
       }
 
-      public <V> Binding<DTO, E> bindSet(NodeLabel nodeLabel) throws GraphMapperInitializationException {
+      /**
+       * Binds an entity getter and DTO setter based on node label name. The field will be mapped conditionally.
+       * The field must be a set reference, it will be mapped to a list reference.
+       *
+       * @param nodeLabel node label of which the name is used to resolve getter and setter name
+       * @return The same instance of binding to enable fluent calls
+       * @throws GraphMapperInitializationException if it's not possible to resolve getter or setter method
+       */
+      public Binding<DTO, E> bindSet(NodeLabel nodeLabel) throws GraphMapperInitializationException {
 
          return bindCollection(nodeLabel, NodeMapperTemplate.ReferenceType.SET);
 
       }
 
-      private <V> Binding<DTO, E> bindCollection(NodeLabel nodeLabel,
-                                                 NodeMapperTemplate.ReferenceType referenceType
+      private Binding<DTO, E> bindCollection(NodeLabel nodeLabel,
+                                             NodeMapperTemplate.ReferenceType referenceType
       ) throws GraphMapperInitializationException {
 
          String capitalizedFieldName = getCapitalizedFieldName(nodeLabel);

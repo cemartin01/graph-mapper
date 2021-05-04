@@ -2,7 +2,6 @@ package io.github.cemartin01.graphmapper;
 
 import com.google.common.collect.ImmutableList;
 import io.github.cemartin01.graphmapper.mock.CateringNodeLabel;
-import io.github.cemartin01.graphmapper.mock.dto.Meal;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

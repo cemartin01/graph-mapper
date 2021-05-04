@@ -20,6 +20,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Contains instance of mapping graph that is based on GraphQL request
+ */
 @Getter
 @AllArgsConstructor
 public class GraphQLMapping {

@@ -25,39 +25,39 @@ import java.util.Map;
  * It's stateless and thread-safe.
  */
 @AllArgsConstructor
-public class GraphMapper<DTO> {
+public class GraphMapper<T> {
 
    private final GraphMapperContext ctx;
 
-   private final Class<DTO> dtoClass;
+   private final Class<T> targetClass;
 
    private final Map<Class<?>, ClassMapping> classMappings;
 
    /**
-    * Maps given source to given DTO class or any of DTO subclasses.
-    * @param entity source to be mapped
+    * Maps given source to given target class or any of target subclasses.
+    * @param source source to be mapped
     * @throws GraphMapperException if mapping fails
-    * @return new Instance of DTO class.
+    * @return new Instance of target class.
     */
    @SuppressWarnings({"unchecked"})
-   public DTO map(Object entity) {
+   public T map(Object source) {
       try {
          if (classMappings.size() == 1) {
-            Object dto = ctx.map(entity, dtoClass);
+            Object target = ctx.map(source, targetClass);
             for (Reference node: classMappings.get(RootMapping.class).getReferences()) {
-               node.getSetter().accept(dto, node.getNodeMapper().map(entity));
+               node.getSetter().accept(target, node.getNodeMapper().map(source));
             }
-            return (DTO) dto;
+            return (T) target;
          } else {
-            ClassMapping mapping = classMappings.get(entity.getClass());
-            Object dto = ctx.map(entity, mapping.getDtoClass());
+            ClassMapping mapping = classMappings.get(source.getClass());
+            Object target = ctx.map(source, mapping.getTargetClass());
             for (Reference node: mapping.getReferences()) {
-               node.getSetter().accept(dto, node.getNodeMapper().map(entity));
+               node.getSetter().accept(target, node.getNodeMapper().map(source));
             }
-            return (DTO) dto;
+            return (T) target;
          }
       } catch (Throwable e) {
-         throw new GraphMapperException("Mapping failed for instance of " + entity.getClass(), e);
+         throw new GraphMapperException("Mapping failed for instance of " + source.getClass(), e);
       }
    }
 

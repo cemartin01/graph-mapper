@@ -28,22 +28,22 @@ class ObjectNodeMapper implements NodeMapper {
 
    private final Function getter;
 
-   private final Class<?> dtoClass;
+   private final Class<?> targetClass;
 
    private final List<Reference> references;
 
    @Override
-   public Object map(Object parentEntity) throws InvocationTargetException, IllegalAccessException {
-      Object currentEntity = getter.apply(parentEntity);
-      if (currentEntity == null) {
+   public Object map(Object parentSource) throws InvocationTargetException, IllegalAccessException {
+      Object currentSource = getter.apply(parentSource);
+      if (currentSource == null) {
          return null;
       }
-      Object unwrappedEntity = ctx.unproxy(currentEntity);
-      Object dto = ctx.map(unwrappedEntity, dtoClass);
-      for (Reference child: references) {
-         child.getSetter().accept(dto, child.getNodeMapper().map(unwrappedEntity));
+      Object unwrappedSource = ctx.unproxy(currentSource);
+      Object target = ctx.map(unwrappedSource, targetClass);
+      for (Reference reference: references) {
+         reference.getSetter().accept(target, reference.getNodeMapper().map(unwrappedSource));
       }
-      return dto;
+      return target;
    }
 
 }

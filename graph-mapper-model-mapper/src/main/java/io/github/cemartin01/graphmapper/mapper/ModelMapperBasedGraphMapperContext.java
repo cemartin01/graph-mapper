@@ -44,27 +44,27 @@ public class ModelMapperBasedGraphMapperContext extends GraphMapperContext {
    /**
     * {@inheritDoc}
     */
-   public <DTO, E> ModelMapperBinding<DTO, E> addMapping(Class<DTO> dtoClass, Class<E> entityClass) {
-      return new ModelMapperBinding<>(dtoClass, entityClass);
+   public <T, S> ModelMapperBinding<T, S> addMapping(Class<T> targetClass, Class<S> sourceClass) {
+      return new ModelMapperBinding<>(targetClass, sourceClass);
    }
 
-   public Object map(Object source, Class<?> destinationClass) {
-      return modelMapper.map(source, destinationClass);
+   public Object map(Object source, Class<?> targetClass) {
+      return modelMapper.map(source, targetClass);
    }
 
-   public class ModelMapperBinding<DTO, E> extends Binding<DTO, E> {
+   public class ModelMapperBinding<T, S> extends Binding<T, S> {
 
-      public ModelMapperBinding(Class<DTO> parentDTOClass, Class<E> parentEntityClass) {
-         super(parentDTOClass, parentEntityClass);
+      public ModelMapperBinding(Class<T> parentTargetClass, Class<S> parentSourceClass) {
+         super(parentTargetClass, parentSourceClass);
       }
 
       /**
        * {@inheritDoc}
-       * @param getterFun setter of a DTO class to skip
-       * @param setterFun getter of an entity class to skip
+       * @param getterFun setter of a target class to skip
+       * @param setterFun getter of a source class to skip
        */
-      public <V> ModelMapperBinding<DTO, E> bind(NodeLabel nodeLabel, SourceGetter<E> getterFun,
-                                      DestinationSetter<DTO, V> setterFun
+      public <V> ModelMapperBinding<T, S> bind(NodeLabel nodeLabel, SourceGetter<S> getterFun,
+                                               DestinationSetter<T, V> setterFun
       ) throws GraphMapperInitializationException {
          super.bind(nodeLabel);
          skipMapping(getterFun, setterFun);
@@ -73,11 +73,11 @@ public class ModelMapperBasedGraphMapperContext extends GraphMapperContext {
 
       /**
        * {@inheritDoc}
-       * @param getterFun setter of a DTO class to skip
-       * @param setterFun getter of an entity class to skip
+       * @param getterFun setter of a target class to skip
+       * @param setterFun getter of a source class to skip
        */
-      public <V> ModelMapperBinding<DTO, E> bindList(NodeLabel nodeLabel, SourceGetter<E> getterFun,
-                                          DestinationSetter<DTO, V> setterFun
+      public <V> ModelMapperBinding<T, S> bindList(NodeLabel nodeLabel, SourceGetter<S> getterFun,
+                                                   DestinationSetter<T, V> setterFun
       ) throws GraphMapperInitializationException {
          super.bindList(nodeLabel);
          skipMapping(getterFun, setterFun);
@@ -86,11 +86,11 @@ public class ModelMapperBasedGraphMapperContext extends GraphMapperContext {
 
       /**
        * {@inheritDoc}
-       * @param getterFun setter of a DTO class to skip
-       * @param setterFun getter of an entity class to skip
+       * @param getterFun setter of a target class to skip
+       * @param setterFun getter of a source class to skip
        */
-      public <V> ModelMapperBinding<DTO, E> bindSet(NodeLabel nodeLabel, SourceGetter<E> getterFun,
-                                          DestinationSetter<DTO, V> setterFun
+      public <V> ModelMapperBinding<T, S> bindSet(NodeLabel nodeLabel, SourceGetter<S> getterFun,
+                                                  DestinationSetter<T, V> setterFun
       ) throws GraphMapperInitializationException {
          super.bindSet(nodeLabel);
          skipMapping(getterFun, setterFun);
@@ -99,16 +99,16 @@ public class ModelMapperBasedGraphMapperContext extends GraphMapperContext {
 
       /**
        * Applies model-mapper conditional mapping
-       * @param dtoClass a super class of a current DTO class
-       * @param entityClass a super class of a current entity class
+       * @param targetClass a super class of a current target class
+       * @param sourceClass a super class of a current source class
        */
-      public void includeBaseBinding(Class<? super DTO> dtoClass, Class<? super E> entityClass) {
-         modelMapper.typeMap(parentEntityClass, parentDTOClass)
-                 .includeBase(entityClass, dtoClass);
+      public void includeBaseBinding(Class<? super T> targetClass, Class<? super S> sourceClass) {
+         modelMapper.typeMap(parentSourceClass, parentTargetClass)
+                 .includeBase(sourceClass, targetClass);
       }
 
-      private <V> void skipMapping(SourceGetter<E> getterFun, DestinationSetter<DTO, V> setterFun) {
-         modelMapper.typeMap(parentEntityClass, parentDTOClass).addMappings(
+      private <V> void skipMapping(SourceGetter<S> getterFun, DestinationSetter<T, V> setterFun) {
+         modelMapper.typeMap(parentSourceClass, parentTargetClass).addMappings(
                  m -> m.when(skipMappingFunction).map(getterFun, setterFun)
          );
       }

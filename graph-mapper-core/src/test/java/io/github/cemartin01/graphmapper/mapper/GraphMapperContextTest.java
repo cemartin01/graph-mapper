@@ -75,7 +75,7 @@ public class GraphMapperContextTest {
         ReferenceTemplate mealTypeReference = lunchReferenceTemplates.get(0);
         assertEquals(CateringNodeLabel.MEAL_TYPE, mealTypeReference.getNodeLabel());
         assertEquals(NodeMapperTemplate.ReferenceType.OBJECT, mealTypeReference.getNodeMapperTemplate().getReferenceType());
-        assertEquals(MealTypeDTO.class, mealTypeReference.getNodeMapperTemplate().getDtoClass());
+        assertEquals(MealTypeDTO.class, mealTypeReference.getNodeMapperTemplate().getTargetClass());
 
         LunchDTO lunchDTO = new LunchDTO();
         MealTypeDTO mealTypeDTO = new MealTypeDTO();
@@ -95,7 +95,7 @@ public class GraphMapperContextTest {
         ReferenceTemplate dayMenusReference = weekMenuReferenceTemplates.get(2);
         assertEquals(DAY_MENUS, dayMenusReference.getNodeLabel());
         assertEquals(NodeMapperTemplate.ReferenceType.LIST, dayMenusReference.getNodeMapperTemplate().getReferenceType());
-        assertEquals(DayMenuDTO.class, dayMenusReference.getNodeMapperTemplate().getDtoClass());
+        assertEquals(DayMenuDTO.class, dayMenusReference.getNodeMapperTemplate().getTargetClass());
 
         WeekMenuDTO weekMenuDTO = new WeekMenuDTO();
         List<DayMenuDTO> dayMenus = new ArrayList<>();
@@ -113,7 +113,7 @@ public class GraphMapperContextTest {
         ReferenceTemplate variantsReference = recipeReferenceTemplates.get(0);
         assertEquals(VARIANTS, variantsReference.getNodeLabel());
         assertEquals(NodeMapperTemplate.ReferenceType.SET, variantsReference.getNodeMapperTemplate().getReferenceType());
-        assertEquals(Meal.class, variantsReference.getNodeMapperTemplate().getDtoClass());
+        assertEquals(Meal.class, variantsReference.getNodeMapperTemplate().getTargetClass());
 
         RecipeDTO recipeDTO = new RecipeDTO();
         List<Meal> meals = new ArrayList<>();
@@ -146,20 +146,20 @@ public class GraphMapperContextTest {
         ClassNode classNode = ctx.getClassNode(Meal.class);
         assertNotNull(classNode);
 
-        assertEquals(Meal.class, classNode.getDtoClass());
-        assertEquals(MealEntity.class, classNode.getEntityClass());
+        assertEquals(Meal.class, classNode.getTargetClass());
+        assertEquals(MealEntity.class, classNode.getSourceClass());
 
         List<ClassNode> children = classNode.getChildren();
         assertNotNull(children);
         assertEquals(2, children.size());
 
         ClassNode lunchNode = children.get(0);
-        assertEquals(LunchDTO.class, lunchNode.getDtoClass());
-        assertEquals(LunchEntity.class, lunchNode.getEntityClass());
+        assertEquals(LunchDTO.class, lunchNode.getTargetClass());
+        assertEquals(LunchEntity.class, lunchNode.getSourceClass());
 
         ClassNode soupNode = children.get(1);
-        assertEquals(SoupDTO.class, soupNode.getDtoClass());
-        assertEquals(SoupEntity.class, soupNode.getEntityClass());
+        assertEquals(SoupDTO.class, soupNode.getTargetClass());
+        assertEquals(SoupEntity.class, soupNode.getSourceClass());
 
     }
 
@@ -176,20 +176,20 @@ public class GraphMapperContextTest {
         ClassNode classNode = ctx.getClassNode(MealUnion.class);
         assertNotNull(classNode);
 
-        assertEquals(MealUnion.class, classNode.getDtoClass());
-        assertEquals(MealEntity.class, classNode.getEntityClass());
+        assertEquals(MealUnion.class, classNode.getTargetClass());
+        assertEquals(MealEntity.class, classNode.getSourceClass());
 
         List<ClassNode> children = classNode.getChildren();
         assertNotNull(children);
         assertEquals(2, children.size());
 
         ClassNode lunchNode = children.get(0);
-        assertEquals(LunchDTO.class, lunchNode.getDtoClass());
-        assertEquals(LunchEntity.class, lunchNode.getEntityClass());
+        assertEquals(LunchDTO.class, lunchNode.getTargetClass());
+        assertEquals(LunchEntity.class, lunchNode.getSourceClass());
 
         ClassNode soupNode = children.get(1);
-        assertEquals(SoupDTO.class, soupNode.getDtoClass());
-        assertEquals(SoupEntity.class, soupNode.getEntityClass());
+        assertEquals(SoupDTO.class, soupNode.getTargetClass());
+        assertEquals(SoupEntity.class, soupNode.getSourceClass());
 
     }
 

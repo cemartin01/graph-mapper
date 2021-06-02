@@ -29,21 +29,21 @@ class HeterogeneousCollectionNodeMapper {
       if (sourceCollection == null) {
          return null;
       }
-      List<Object> dtoList = new ArrayList<>();
-      for (Object currentEntity: sourceCollection) {
-         if (currentEntity == null) {
-            dtoList.add(null);
+      List<Object> targetList = new ArrayList<>();
+      for (Object currentSource: sourceCollection) {
+         if (currentSource == null) {
+            targetList.add(null);
             continue;
          }
-         Object unwrappedEntity = ctx.unproxy(currentEntity);
-         ClassMapping classMapping = classMappings.get(unwrappedEntity.getClass());
-         Object dto = ctx.map(currentEntity, classMapping.getDtoClass());
-         for (Reference child: classMapping.getReferences()) {
-            child.getSetter().accept(dto, child.getNodeMapper().map(unwrappedEntity));
+         Object unwrappedSource = ctx.unproxy(currentSource);
+         ClassMapping classMapping = classMappings.get(unwrappedSource.getClass());
+         Object target = ctx.map(currentSource, classMapping.getTargetClass());
+         for (Reference reference: classMapping.getReferences()) {
+            reference.getSetter().accept(target, reference.getNodeMapper().map(unwrappedSource));
          }
-         dtoList.add(dto);
+         targetList.add(target);
       }
-      return dtoList;
+      return targetList;
    }
 
 }

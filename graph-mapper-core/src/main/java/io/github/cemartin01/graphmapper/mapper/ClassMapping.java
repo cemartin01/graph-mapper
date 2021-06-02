@@ -24,7 +24,7 @@ import lombok.Getter;
 @AllArgsConstructor
 class ClassMapping {
 
-   private final Class<?> dtoClass;
+   private final Class<?> targetClass;
    private final List<Reference> references;
 
 }

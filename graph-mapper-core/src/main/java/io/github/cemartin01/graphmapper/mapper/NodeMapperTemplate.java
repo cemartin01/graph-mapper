@@ -30,7 +30,7 @@ class NodeMapperTemplate {
 
    private final Function getter;
 
-   private final Class<?> dtoClass;
+   private final Class<?> targetClass;
 
    private final ReferenceType referenceType;
 

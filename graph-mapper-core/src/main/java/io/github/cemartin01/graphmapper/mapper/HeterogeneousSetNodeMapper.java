@@ -35,9 +35,9 @@ class HeterogeneousSetNodeMapper extends HeterogeneousCollectionNodeMapper imple
    private final Map<Class<?>, ClassMapping> subclassMappings;
 
    @Override
-   public Object map(Object parentEntity) throws InvocationTargetException, IllegalAccessException {
-      Set<?> currentEntitySet = (Set<?>) getter.apply(parentEntity);
-      return mapToList(ctx, currentEntitySet, subclassMappings);
+   public Object map(Object parentSource) throws InvocationTargetException, IllegalAccessException {
+      Set<?> currentSourceSet = (Set<?>) getter.apply(parentSource);
+      return mapToList(ctx, currentSourceSet, subclassMappings);
    }
 
 }

@@ -57,10 +57,10 @@ import lombok.RequiredArgsConstructor;
  */
 public class GraphMapperContext {
 
-   //DTO class, list of RelationshipTemplates
+   //Target class, list of RelationshipTemplates
    protected final Map<Class<?>, List<ReferenceTemplate>> referenceMap = new HashMap<>();
 
-   //DTO class, list of DTO classes
+   //Target class
    protected final Map<Class<?>, ClassNode> classTreeNodes = new HashMap<>();
 
    protected final Map<Class<?>, Function> mappers = new HashMap<>(17, 0.3f);
@@ -72,69 +72,69 @@ public class GraphMapperContext {
       this.unproxyFunction = unproxyFunction;
    }
 
-   public <DTO> void addMapper(Function<Object, DTO> mapper, Class<DTO> dtoClass) {
-      mappers.put(dtoClass, mapper);
+   public <T> void addMapper(Function<Object, T> mapper, Class<T> targetClass) {
+      mappers.put(targetClass, mapper);
    }
 
-   public <DTO, E> Binding<DTO, E> addMapping(Class<DTO> dtoClass, Class<E> entityClass) {
-      return new Binding<>(dtoClass, entityClass);
+   public <T, S> Binding<T, S> addMapping(Class<T> targetClass, Class<S> sourceClass) {
+      return new Binding<>(targetClass, sourceClass);
    }
 
    /**
     * Defines a class hierarchy to properly handle conditional mapping in the scope of class hierarchy
-    * @param dtoClass base DTO class
-    * @param entityClass base entity class
+    * @param targetClass base target class
+    * @param sourceClass base source class
     * @param classNodes list of subclasses
     */
-   public void defineClassHierarchy(Class<?> dtoClass, Class<?> entityClass, ClassNode...classNodes) {
-      ClassTree tree = ClassTree.of(dtoClass, entityClass, classNodes);
-      classTreeNodes.put(dtoClass, tree.getRoot());
+   public void defineClassHierarchy(Class<?> targetClass, Class<?> sourceClass, ClassNode...classNodes) {
+      ClassTree tree = ClassTree.of(targetClass, sourceClass, classNodes);
+      classTreeNodes.put(targetClass, tree.getRoot());
       populateClassTrees(tree.getRoot());
    }
 
    /**
     * Defines interface based mapping
-    * @param dtoInterface a interface for DTO classes
-    * @param entityClass an abstract entity class
+    * @param targetInterface a interface for target classes
+    * @param sourceClass an abstract source class
     * @param classNodes list of subclasses
     * @throws GraphMapperInitializationException if validation of classes fails
     */
-   public void defineInterface(Class<?> dtoInterface, Class<?> entityClass, ClassNode...classNodes)
+   public void defineInterface(Class<?> targetInterface, Class<?> sourceClass, ClassNode...classNodes)
             throws GraphMapperInitializationException {
-      if (!dtoInterface.isInterface()) {
-         throw new GraphMapperInitializationException(dtoInterface + " is not an interface");
+      if (!targetInterface.isInterface()) {
+         throw new GraphMapperInitializationException(targetInterface + " is not an interface");
       }
-      if (!Modifier.isAbstract(entityClass.getModifiers())) {
-         throw new GraphMapperInitializationException(entityClass + " is not an abstract class");
+      if (!Modifier.isAbstract(sourceClass.getModifiers())) {
+         throw new GraphMapperInitializationException(sourceClass + " is not an abstract class");
       }
-      defineClassHierarchy(dtoInterface, entityClass, classNodes);
+      defineClassHierarchy(targetInterface, sourceClass, classNodes);
    }
 
    /**
     * Defines a typescript like union mapping.
-    * @param dtoInterface empty interface representing union in Java
-    * @param entityClass abstract entity
+    * @param targetInterface empty interface representing union in Java
+    * @param sourceClass abstract source class
     * @param classNodes list of subclasses
     * @throws GraphMapperInitializationException if validation of classes fails
     */
-   public void defineUnion(Class<?> dtoInterface, Class<?> entityClass, ClassNode...classNodes)
+   public void defineUnion(Class<?> targetInterface, Class<?> sourceClass, ClassNode...classNodes)
             throws GraphMapperInitializationException {
-      if (!dtoInterface.isInterface()) {
-         throw new GraphMapperInitializationException(dtoInterface + " is not an interface");
+      if (!targetInterface.isInterface()) {
+         throw new GraphMapperInitializationException(targetInterface + " is not an interface");
       }
-      if (dtoInterface.getMethods().length != 0) {
-         throw new GraphMapperInitializationException(dtoInterface + " declares a method, so it is not a GraphQL union model");
+      if (targetInterface.getMethods().length != 0) {
+         throw new GraphMapperInitializationException(targetInterface + " declares a method, so it is not a GraphQL union model");
       }
-      if (!Modifier.isAbstract(entityClass.getModifiers())) {
-         throw new GraphMapperInitializationException(entityClass + " is not an abstract class");
+      if (!Modifier.isAbstract(sourceClass.getModifiers())) {
+         throw new GraphMapperInitializationException(sourceClass + " is not an abstract class");
       }
-      defineClassHierarchy(dtoInterface, entityClass, classNodes);
+      defineClassHierarchy(targetInterface, sourceClass, classNodes);
    }
 
    private void populateClassTrees(ClassNode currentNode) {
       currentNode.getChildren().forEach(node -> {
          if (!node.getChildren().isEmpty()) {
-            classTreeNodes.put(node.getDtoClass(), node);
+            classTreeNodes.put(node.getTargetClass(), node);
             populateClassTrees(node);
          }
       });
@@ -148,8 +148,8 @@ public class GraphMapperContext {
       return unproxyFunction.unproxy(object);
    }
 
-   public Object map(Object source, Class<?> destinationClass) {
-      return mappers.get(destinationClass).apply(source);
+   public Object map(Object source, Class<?> targetClass) {
+      return mappers.get(targetClass).apply(source);
    }
 
    public List<ReferenceTemplate> getReferenceTemplates(Class<?> clazz) {
@@ -157,89 +157,89 @@ public class GraphMapperContext {
    }
 
    /**
-    * Describes a binding between a target DTO and an entity class.
+    * Describes a binding between a target class and an source class.
     *
-    * Provides a way to further bind entity getter and DTO setter together to a given node label.
+    * Provides a way to further bind source class getter and target class setter together to a given node label.
     *
-    * @param <DTO> A target DTO class
-    * @param <E> An entity class
+    * @param <T> A target class
+    * @param <S> A source class
     */
    @RequiredArgsConstructor
-   public class Binding<DTO, E> {
+   public class Binding<T, S> {
 
-      protected final Class<DTO> parentDTOClass;
-      protected final Class<E> parentEntityClass;
+      protected final Class<T> parentTargetClass;
+      protected final Class<S> parentSourceClass;
 
       /**
-       * Binds an entity getter and DTO setter based on node label name. The field will be mapped conditionally.
+       * Binds a source class getter and target class setter based on node label name. The field will be mapped conditionally.
        * The field must be a reference, it will be mapped to a reference.
        *
        * @param nodeLabel node label of which the name is used to resolve getter and setter name
        * @return The same instance of binding to enable fluent calls
        * @throws GraphMapperInitializationException if it's not possible to resolve getter or setter method
        */
-      public Binding<DTO, E> bind(NodeLabel nodeLabel) throws GraphMapperInitializationException {
+      public Binding<T, S> bind(NodeLabel nodeLabel) throws GraphMapperInitializationException {
 
          String capitalizedFieldName = getCapitalizedFieldName(nodeLabel);
 
-         Method setter = findMethod(parentDTOClass, "set" + capitalizedFieldName);
-         Class<?> childDTOClass = setter.getParameterTypes()[0];
+         Method setter = findMethod(parentTargetClass, "set" + capitalizedFieldName);
+         Class<?> childTargetClass = setter.getParameterTypes()[0];
          BiConsumer setterLambda = createSetterMethod(setter);
 
-         Method getter = findMethod(parentEntityClass, "get" + capitalizedFieldName);
+         Method getter = findMethod(parentSourceClass, "get" + capitalizedFieldName);
          Function getterLambda = createGetterMethod(getter);
 
-         referenceMap.computeIfAbsent(parentDTOClass, clazz -> new ArrayList<>())
-                  .add(new ReferenceTemplate(nodeLabel, setterLambda, new NodeMapperTemplate(getterLambda, childDTOClass,
+         referenceMap.computeIfAbsent(parentTargetClass, clazz -> new ArrayList<>())
+                  .add(new ReferenceTemplate(nodeLabel, setterLambda, new NodeMapperTemplate(getterLambda, childTargetClass,
                            NodeMapperTemplate.ReferenceType.OBJECT)));
          return this;
       }
 
       /**
-       * Binds an entity getter and DTO setter based on node label name. The field will be mapped conditionally.
+       * Binds a source class getter and target class setter based on node label name. The field will be mapped conditionally.
        * The field must be a list reference, it will be mapped to a list reference.
        *
        * @param nodeLabel node label of which the name is used to resolve getter and setter name
        * @return The same instance of binding to enable fluent calls
        * @throws GraphMapperInitializationException if it's not possible to resolve getter or setter method
        */
-      public Binding<DTO, E> bindList(NodeLabel nodeLabel) throws GraphMapperInitializationException {
+      public Binding<T, S> bindList(NodeLabel nodeLabel) throws GraphMapperInitializationException {
 
          return bindCollection(nodeLabel, NodeMapperTemplate.ReferenceType.LIST);
 
       }
 
       /**
-       * Binds an entity getter and DTO setter based on node label name. The field will be mapped conditionally.
+       * Binds a source class getter and target class setter based on node label name. The field will be mapped conditionally.
        * The field must be a set reference, it will be mapped to a list reference.
        *
        * @param nodeLabel node label of which the name is used to resolve getter and setter name
        * @return The same instance of binding to enable fluent calls
        * @throws GraphMapperInitializationException if it's not possible to resolve getter or setter method
        */
-      public Binding<DTO, E> bindSet(NodeLabel nodeLabel) throws GraphMapperInitializationException {
+      public Binding<T, S> bindSet(NodeLabel nodeLabel) throws GraphMapperInitializationException {
 
          return bindCollection(nodeLabel, NodeMapperTemplate.ReferenceType.SET);
 
       }
 
-      private Binding<DTO, E> bindCollection(NodeLabel nodeLabel,
-                                             NodeMapperTemplate.ReferenceType referenceType
+      private Binding<T, S> bindCollection(NodeLabel nodeLabel,
+                                           NodeMapperTemplate.ReferenceType referenceType
       ) throws GraphMapperInitializationException {
 
          String capitalizedFieldName = getCapitalizedFieldName(nodeLabel);
 
-         Method setter = findMethod(parentDTOClass, "set" + capitalizedFieldName);
+         Method setter = findMethod(parentTargetClass, "set" + capitalizedFieldName);
          ParameterizedType list = (ParameterizedType) setter.getGenericParameterTypes()[0];
-         Class<?> childDTOClass = (Class<?>)list.getActualTypeArguments()[0];
+         Class<?> childTargetClass = (Class<?>)list.getActualTypeArguments()[0];
          BiConsumer setterLambda = createSetterMethod(setter);
 
-         Method getter = findMethod(parentEntityClass, "get" + capitalizedFieldName);
+         Method getter = findMethod(parentSourceClass, "get" + capitalizedFieldName);
          Function getterLambda = createGetterMethod(getter);
 
-         referenceMap.computeIfAbsent(parentDTOClass, clazz -> new ArrayList<>())
+         referenceMap.computeIfAbsent(parentTargetClass, clazz -> new ArrayList<>())
                   .add(new ReferenceTemplate(nodeLabel, setterLambda,
-                           new NodeMapperTemplate(getterLambda, childDTOClass, referenceType)));
+                           new NodeMapperTemplate(getterLambda, childTargetClass, referenceType)));
 
          return this;
 
@@ -262,7 +262,7 @@ public class GraphMapperContext {
                      MethodType.methodType(Function.class),
                      MethodType.methodType(Object.class, Object.class),
                      getterHandle,
-                     MethodType.methodType(getter.getReturnType(), parentEntityClass)
+                     MethodType.methodType(getter.getReturnType(), parentSourceClass)
             );
             return (Function) callSite.getTarget().invokeExact();
          } catch (Throwable t) {

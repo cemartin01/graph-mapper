@@ -34,18 +34,18 @@ public class DynamicObjectNodeMapper implements NodeMapper {
    private final Map<Class<?>, ClassMapping> classMappings;
 
    @Override
-   public Object map(Object parentEntity) throws InvocationTargetException, IllegalAccessException {
-      Object currentEntity = getter.apply(parentEntity);
-      if (currentEntity == null) {
+   public Object map(Object parentSource) throws InvocationTargetException, IllegalAccessException {
+      Object currentSource = getter.apply(parentSource);
+      if (currentSource == null) {
          return null;
       }
-      Object unwrappedEntity = ctx.unproxy(currentEntity);
-      ClassMapping classMapping = classMappings.get(unwrappedEntity.getClass());
-      Object dto = ctx.map(unwrappedEntity, classMapping.getDtoClass());
-      for (Reference child: classMapping.getReferences()) {
-         child.getSetter().accept(dto, child.getNodeMapper().map(unwrappedEntity));
+      Object unwrappedSource = ctx.unproxy(currentSource);
+      ClassMapping classMapping = classMappings.get(unwrappedSource.getClass());
+      Object target = ctx.map(unwrappedSource, classMapping.getTargetClass());
+      for (Reference reference: classMapping.getReferences()) {
+         reference.getSetter().accept(target, reference.getNodeMapper().map(unwrappedSource));
       }
-      return dto;
+      return target;
    }
 
 }

@@ -42,11 +42,11 @@ class ReferenceFactory {
    private NodeMapper buildNodeMapper(NodeMapperTemplate nodeMapperTemplate, List<Reference> rootReferences) {
       switch (nodeMapperTemplate.getReferenceType()) {
          case OBJECT: return new ObjectNodeMapper(ctx, nodeMapperTemplate.getGetter(),
-                  nodeMapperTemplate.getDtoClass(), rootReferences);
+                  nodeMapperTemplate.getTargetClass(), rootReferences);
          case LIST: return new ListNodeMapper(ctx, nodeMapperTemplate.getGetter(),
-                  nodeMapperTemplate.getDtoClass(), rootReferences);
+                  nodeMapperTemplate.getTargetClass(), rootReferences);
          case SET: return new SetNodeMapper(ctx, nodeMapperTemplate.getGetter(),
-                  nodeMapperTemplate.getDtoClass(), rootReferences);
+                  nodeMapperTemplate.getTargetClass(), rootReferences);
          default: throw new GraphMapperException("Unknown reference type");
       }
    }

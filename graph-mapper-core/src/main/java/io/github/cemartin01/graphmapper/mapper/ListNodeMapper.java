@@ -28,14 +28,14 @@ class ListNodeMapper extends CollectionNodeMapper implements NodeMapper {
 
    private final Function getter;
 
-   private final Class<?> dtoClass;
+   private final Class<?> targetClass;
 
    private final List<Reference> references;
 
    @Override
-   public Object map(Object parentEntity) throws InvocationTargetException, IllegalAccessException {
-      List<?> currentEntityList = (List<?>) getter.apply(parentEntity);
-      return mapToList(ctx, currentEntityList, dtoClass, references);
+   public Object map(Object parentSource) throws InvocationTargetException, IllegalAccessException {
+      List<?> currentSourceList = (List<?>) getter.apply(parentSource);
+      return mapToList(ctx, currentSourceList, targetClass, references);
    }
 
 }

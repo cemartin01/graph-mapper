@@ -26,12 +26,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ClassNode {
 
-   private final Class<?> dtoClass;
-   private final Class<?> entityClass;
+   private final Class<?> targetClass;
+   private final Class<?> sourceClass;
    private final List<ClassNode> children;
 
-   public static ClassNode of(final Class<?> dtoClass, final Class<?> entityClass, ClassNode...subClasses) {
-      return new ClassNode(dtoClass, entityClass, Lists.newArrayList(subClasses));
+   public static ClassNode of(final Class<?> targetClass, final Class<?> sourceClass, ClassNode...subClasses) {
+      return new ClassNode(targetClass, sourceClass, Lists.newArrayList(subClasses));
    }
 
 }

@@ -44,23 +44,23 @@ public class GraphMapperFactory {
    }
 
    /**
-    * Creates a GraphMapper that maps given source to given DTO class or any of DTO subclasses.
+    * Creates a GraphMapper that maps given source to given target class or any of target subclasses.
     * If you want to map a heterogeneous collection, pass the parent of of class hierarchy.
-    * @param mappingGraph
-    * @param rootDTOClass
-    * @param <DTO>
-    * @return GraphMapper typed to DTO class
+    * @param mappingGraph template for Graph Mapper
+    * @param rootTargetClass root of a target class hierarchy
+    * @param <T> target class typing
+    * @return GraphMapper typed to target class
     */
-   public <DTO> GraphMapper<DTO> getGraphMapper(MappingGraph<?> mappingGraph, Class<DTO> rootDTOClass) {
-      return new GraphMapper<>(ctx, rootDTOClass, getChildren(mappingGraph.getRoot(), rootDTOClass));
+   public <T> GraphMapper<T> getGraphMapper(MappingGraph<?> mappingGraph, Class<T> rootTargetClass) {
+      return new GraphMapper<>(ctx, rootTargetClass, getChildren(mappingGraph.getRoot(), rootTargetClass));
    }
 
-   private Map<Class<?>, ClassMapping> getChildren(Node<?> parentNode, Class<?> rootDTOClass) {
+   private Map<Class<?>, ClassMapping> getChildren(Node<?> parentNode, Class<?> rootTargetClass) {
       Map<Class<?>, ClassMapping> mappings;
 
-      ClassMapping rootMapping = getChildrenForClass(Collections.emptyList(), parentNode, rootDTOClass);
+      ClassMapping rootMapping = getChildrenForClass(Collections.emptyList(), parentNode, rootTargetClass);
 
-      ClassNode classNode = ctx.getClassNode(rootDTOClass);
+      ClassNode classNode = ctx.getClassNode(rootTargetClass);
 
       if (classNode == null) {
          mappings = Collections.singletonMap(RootMapping.class, rootMapping);
@@ -75,16 +75,16 @@ public class GraphMapperFactory {
    private void populateClassMappings(Map<Class<?>, ClassMapping> mappings, Node<?> node,
                                       ClassNode parentClassNode, List<Reference> superReferences) {
       for (ClassNode classNode: parentClassNode.getChildren()) {
-         ClassMapping subclassMapping = getChildrenForClass(superReferences, node, classNode.getDtoClass());
-         mappings.put(classNode.getEntityClass(), subclassMapping);
+         ClassMapping subclassMapping = getChildrenForClass(superReferences, node, classNode.getTargetClass());
+         mappings.put(classNode.getSourceClass(), subclassMapping);
          populateClassMappings(mappings, node, classNode, subclassMapping.getReferences());
       }
    }
 
    private ClassMapping getChildrenForClass(List<Reference> superReferences, Node<?> parentNode,
-                                            Class<?> currentDTOClass) {
+                                            Class<?> currentTargetClass) {
       List<Reference> references = new ArrayList<>(superReferences);
-      List<ReferenceTemplate> templates = ctx.getReferenceTemplates(currentDTOClass);
+      List<ReferenceTemplate> templates = ctx.getReferenceTemplates(currentTargetClass);
       if (templates != null) {
          parentNode.getChildren().forEach(node -> {
             Optional<ReferenceTemplate> selected = templates.stream()
@@ -92,14 +92,14 @@ public class GraphMapperFactory {
                      .findFirst();
             if (selected.isPresent()) {
                ReferenceTemplate template = selected.get();
-               Map<Class<?>, ClassMapping> classMappings = getChildren(node, template.getNodeMapperTemplate().getDtoClass());
+               Map<Class<?>, ClassMapping> classMappings = getChildren(node, template.getNodeMapperTemplate().getTargetClass());
                Reference reference = referenceFactory.getReference(template, classMappings);
                references.add(reference);
             }
          });
       }
 
-      return new ClassMapping(currentDTOClass, references);
+      return new ClassMapping(currentTargetClass, references);
    }
 
 }

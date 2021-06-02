@@ -35,9 +35,9 @@ class HeterogeneousListNodeMapper extends HeterogeneousCollectionNodeMapper impl
    private final Map<Class<?>, ClassMapping> classMappings;
 
    @Override
-   public Object map(Object parentEntity) throws InvocationTargetException, IllegalAccessException {
-      List<?> currentEntityList = (List<?>) getter.apply(parentEntity);
-      return mapToList(ctx, currentEntityList, classMappings);
+   public Object map(Object parentSource) throws InvocationTargetException, IllegalAccessException {
+      List<?> currentSourceList = (List<?>) getter.apply(parentSource);
+      return mapToList(ctx, currentSourceList, classMappings);
    }
 
 }

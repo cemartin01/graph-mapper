@@ -22,25 +22,25 @@ import java.util.List;
 
 class CollectionNodeMapper {
 
-   protected List<Object> mapToList(GraphMapperContext ctx, Collection<?> sourceCollection, Class<?> dtoClass,
+   protected List<Object> mapToList(GraphMapperContext ctx, Collection<?> sourceCollection, Class<?> targetClass,
                                     List<Reference> references) throws InvocationTargetException, IllegalAccessException {
       if (sourceCollection == null) {
          return null;
       }
-      List<Object> dtoList = new ArrayList<>();
-      for (Object currentEntity: sourceCollection) {
-         if (currentEntity == null) {
-            dtoList.add(null);
+      List<Object> targetList = new ArrayList<>();
+      for (Object currentSource: sourceCollection) {
+         if (currentSource == null) {
+            targetList.add(null);
             continue;
          }
-         Object unwrappedEntity = ctx.unproxy(currentEntity);
-         Object dto = ctx.map(unwrappedEntity, dtoClass);
-         for (Reference child: references) {
-            child.getSetter().accept(dto, child.getNodeMapper().map(unwrappedEntity));
+         Object unwrappedSource = ctx.unproxy(currentSource);
+         Object target = ctx.map(unwrappedSource, targetClass);
+         for (Reference reference: references) {
+            reference.getSetter().accept(target, reference.getNodeMapper().map(unwrappedSource));
          }
-         dtoList.add(dto);
+         targetList.add(target);
       }
-      return dtoList;
+      return targetList;
    }
 
 }

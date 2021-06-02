@@ -49,7 +49,7 @@ public class ReferenceFactoryTest {
 
         Field dtoClassField = ObjectNodeMapper.class.getDeclaredField("dtoClass");
         dtoClassField.setAccessible(true);
-        assertSame(referenceTemplate.nodeMapperTemplate.getDtoClass(), dtoClassField.get(nodeMapper));
+        assertSame(referenceTemplate.nodeMapperTemplate.getTargetClass(), dtoClassField.get(nodeMapper));
 
         Field referencesField = ObjectNodeMapper.class.getDeclaredField("references");
         referencesField.setAccessible(true);

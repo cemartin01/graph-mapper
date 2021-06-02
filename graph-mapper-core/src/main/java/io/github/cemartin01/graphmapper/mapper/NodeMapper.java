@@ -19,6 +19,6 @@ import java.lang.reflect.InvocationTargetException;
 
 interface NodeMapper {
 
-   Object map(Object parentEntity) throws InvocationTargetException, IllegalAccessException;
+   Object map(Object parentSource) throws InvocationTargetException, IllegalAccessException;
 
 }

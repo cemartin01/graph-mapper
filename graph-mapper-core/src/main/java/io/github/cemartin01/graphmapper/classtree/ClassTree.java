@@ -24,8 +24,8 @@ public class ClassTree {
 
    public final ClassNode root;
 
-   public static ClassTree of(final Class<?> dtoClass, final Class<?> entityClass, ClassNode...subClasses) {
-      return new ClassTree(ClassNode.of(dtoClass, entityClass, subClasses));
+   public static ClassTree of(final Class<?> targetClass, final Class<?> sourceClass, ClassNode...subClasses) {
+      return new ClassTree(ClassNode.of(targetClass, sourceClass, subClasses));
    }
 
 }

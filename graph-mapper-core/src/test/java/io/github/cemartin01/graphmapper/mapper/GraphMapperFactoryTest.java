@@ -57,7 +57,7 @@ public class GraphMapperFactoryTest {
 
         ClassMapping currentMapping = classMappings.get(RootMapping.class);
 
-        assertEquals(WeekMenuDTO.class, currentMapping.getDtoClass());
+        assertEquals(WeekMenuDTO.class, currentMapping.getTargetClass());
 
         Reference currentReference = currentMapping.getReferences().get(0);
 

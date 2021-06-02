@@ -23,16 +23,16 @@ public class ClassTreeTest {
         ClassNode classNode = tree.getRoot();
         assertNotNull(classNode);
 
-        assertEquals(Meal.class, classNode.getDtoClass());
-        assertEquals(MealEntity.class, classNode.getEntityClass());
+        assertEquals(Meal.class, classNode.getTargetClass());
+        assertEquals(MealEntity.class, classNode.getSourceClass());
 
         List<ClassNode> children = classNode.getChildren();
         assertNotNull(children);
         assertEquals(1, children.size());
 
         ClassNode lunchNode = children.get(0);
-        assertEquals(LunchDTO.class, lunchNode.getDtoClass());
-        assertEquals(LunchEntity.class, lunchNode.getEntityClass());
+        assertEquals(LunchDTO.class, lunchNode.getTargetClass());
+        assertEquals(LunchEntity.class, lunchNode.getSourceClass());
 
     }
 
